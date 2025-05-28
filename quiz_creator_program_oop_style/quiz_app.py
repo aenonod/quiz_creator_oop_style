@@ -31,7 +31,7 @@ class QuizApp:
         
         correct_ans = input("\nCorrect answer (type exactly as one of the choices): ").strip()
 
-        return Question(question_text, choices, correct_ans)
+        return Question(question, choices, correct_ans)
     
     # create/edit a quiz
     def create_or_edit_quiz(self):
@@ -64,4 +64,25 @@ class QuizApp:
         input("Press Enter to go back to main menu...")
         
     # run the program (main menu)
-    
+    def run(self):
+        while True:
+                print("\n===== MAIN MENU =====")
+                print("👆 Press 1 to create new or edit an existing quiz file")
+                print("👆 Press 2 to view a quiz file")
+                print("👆 Press 3 to exit")
+
+                try:
+                    choice = int(input("\n⭐ Enter your choice: "))
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+                    continue
+
+                if choice == 1:
+                    self.create_or_edit_quiz()
+                elif choice == 2:
+                    self.view_quiz_file()
+                elif choice == 3:
+                    print("\nGoodbye, user!👋")
+                    break
+                else:
+                    print("Invalid choice. Please enter 1, 2, or 3.")
