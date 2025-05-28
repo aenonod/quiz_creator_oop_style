@@ -20,6 +20,25 @@ class Question:
             output += f"{chr(97 + i)}) {choice}\n" # chr(97) = 'a'
         output += f"Correct answer: {self.correct_ans_letter}\n"
         return output
+    
+    # to check if the letter input by the user matches the correct letter
+    def check_user_answer(self, user_input_letter):
+        return user_input_letter.lower() == self.correct_ans_letter
+        
+    # parses lines from a file to create object
+    @staticmethod
+    def from_file_lines(lines):
+        question_text = lines[0].replace("Question: ", "").strip()
+        
+        choices = []
+        for i in range(1,5):
+            choice_line = lines[i].strip()
+            choices.append(choice_line[3:].strip())
+            
+        correct_ans_line = lines[5].strip()
+        correct_ans_letter = correct_ans_line.replace("Correct answer: ", "").strip().lower()
+        
+        return Question(question_text, choices, correct_ans_letter)
         
     # easy printing of a question object
     def __str__(self):
