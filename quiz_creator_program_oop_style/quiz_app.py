@@ -6,18 +6,18 @@ from question import Question
 from quiz_file_manager import QuizFileManager
 
 class QuizApp:
-    # def for constructor to initialize new object
+    # constructor to initialize new object
     def __init__(self):
         self.current_filename = None
         
-    # def to get the filename
+    # to get the filename
     def get_filename_from_user(self):
         filename = input("\nInput your filename (w/o extension): ").strip()
         if not filename.endswith(".txt"):
             filename += ".txt"
         return filename
     
-    # def to get the data (question, choices, and correct answer) from the user
+    # to get the data (question, choices, and correct answer) from the user
     def get_data_from_user(self):
         print("\n>>> QUIZ CREATOR <<<")
         question = input("Input question: ")
@@ -33,6 +33,35 @@ class QuizApp:
 
         return Question(question_text, choices, correct_ans)
     
-    # def to create/edit a quiz
-    # def to view a quiz
-    # def to run the program (main menu)
+    # create/edit a quiz
+    def create_or_edit_quiz(self):
+        self.current_filename = self.get_filename_from_user()
+        file_manager = QuizFileManager(self.current_filename)
+
+        while True:
+            new_question = self.get_data_from_user()
+            if new_question:
+                file_manager.save_question(new_question)
+            else:
+                print("Question creation cancelled or invalid input. Not saving this question.")
+
+            add_more = input("\nDo you want to add more questions? (yes/no): ").lower()
+            if add_more != "yes":
+                break
+        
+    # view a quiz
+    def view_quiz_file(self):
+        filename_to_view = input("\nEnter filename to open (with extension): ").strip()
+        if not filename_to_view.endswith(".txt"):
+            filename_to_view += ".txt"
+            
+        file_manager = QuizFileManager(filename_to_view)
+        content = file_manager.load_quiz_content()
+        
+        print(f"\n>>> QUIZ ({filename_to_view}) <<<")
+        print(content)
+        
+        input("Press Enter to go back to main menu...")
+        
+    # run the program (main menu)
+    
