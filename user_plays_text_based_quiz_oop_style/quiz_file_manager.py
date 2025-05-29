@@ -23,24 +23,40 @@ class QuizFileManager:
                 file.write(question.file_format())
             Utilities.display_message(f"Question saved to {self.filename}", delay=1.5)
         except IOError as e:
-            Utilities.display_message(f"Error saving question: {e}", delay=1.5)
+            Utilities.display_message(f"Error saving question: {e}", delay=2)
 
     # to load/read the quiz
     def load_quiz_content(self):
-        with open(self.filename, "r") as file:
-            lines = [line.strip() for line in file if line.strip()]
+        questions = []
+        try:
+            with open(self.filename, "r") as file:
+                lines = [line.strip() for line in file if line.strip()]
             
-        quiz = []
-        index = 0
-        while index < len(lines):
-            question = lines[index]
-            choices = [lines[index+1], lines[index+2], lines[index+3], lines[index+4]]
-            answer_line = lines[index+5]
-            answer = answer_line.split(":")[1].strip()
-            quiz.append({
-                "question": question,
-                "choices": choices,
-                "answer": answer
-            })
-            index += 6
-        return quiz
+            index = 0
+            while index < len(lines):
+                if index + 5 < len(lines):
+                    question_block = lines[index : index + 6]
+                    try:
+                        q_obj = Question.from_file_lines(question_block)
+                        questions.append(q_obj)
+                    except Exception as e:
+                        Utilities.display_message(f"Error parsing question block starting at line {index}: {e}. Skipping this block.", delay=2)
+                else:
+                    Utilities.display_message(f"Incomplete question block found at line {index}. Skipping.", delay=2)
+                index += 6
+        
+        except FileNotFoundError:
+            Utilities.display_message(f"Error: File '{self.filename}' not found.", delay=2)
+        except Exception as e:
+            Utilities.display_message(f"An error occurred while loading the quiz: {e}", delay=2)
+            
+    # to read and return the entire content as a single string
+    def get_raw_file_content(self):
+        try:
+            with open(self.filename, "r") as file:
+                return file.read()
+            
+        except FileNotFoundError:
+            return f"Error: File '{self.filename}' not found."
+        except Exception as e:
+            return f"An error occurred while reading the file: {e}"
