@@ -42,4 +42,4 @@ class Question:
         
     # easy printing of a question object
     def __str__(self):
-        return f"Q: {self.item}, Choices: {self.choices}, Correct: {self.correct_ans_text}"
+        return f"Q: {self.text}\n Choices: {', '.join(self.choices)}\n Correct: {self.correct_answer_letter}) {self.correct_answer_text}"
