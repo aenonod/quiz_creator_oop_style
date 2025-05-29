@@ -165,23 +165,33 @@ class QuizApp:
     # run the program (main menu)
     def run(self):
         while True:
-                print("\n===== MAIN MENU =====")
-                print("👆 Press 1 to create new or edit an existing quiz file")
-                print("👆 Press 2 to view a quiz file")
-                print("👆 Press 3 to exit")
+            Utilities.clear_screen()
+            print("WELCOME TO QUIZMATE!\nLoading...")
+            Utilities.pause(2)
+            Utilities.clear_screen()
+            
+            print("""===== MAIN MENU =====
+👆 Press 1 to start a quiz
+👆 Press 2 to create new or edit an existing quiz file
+👆 Press 3 to view a quiz file
+👆 Press 4 to exit""")
 
-                try:
-                    choice = int(input("\n⭐ Enter your choice: "))
-                except ValueError:
-                    print("Invalid input. Please enter a number.")
-                    continue
+            try:
+                choice = int(input("\n⭐ Enter your choice: "))
+                
+                if choice not in [1, 2, 3, 4]:
+                    raise ValueError("🚫 Invalid input. Please enter a number from 1 to 4.")
 
                 if choice == 1:
-                    self.create_or_edit_quiz()
+                    self.run_quiz_session()
                 elif choice == 2:
-                    self.view_quiz_file()
+                    self.create_or_edit_quiz()
                 elif choice == 3:
-                    print("\nGoodbye, user!👋")
+                    self.view_quiz_file()
+                elif choice == 4:
+                    Utilities.display_message("\nGoodbye, user!👋", delay=2)
                     break
-                else:
-                    print("Invalid choice. Please enter 1, 2, or 3.")
+                
+            except ValueError as error:
+                Utilities.display_message(f"🚫 {error}", delay=1.5)
+                continue
