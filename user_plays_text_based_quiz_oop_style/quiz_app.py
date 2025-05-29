@@ -76,7 +76,7 @@ class QuizApp:
         
     # view a quiz
     def view_quiz_file(self):
-        filename_to_view = get_filename_from_user("\nEnter filename to open (with extension): ").strip()
+        filename_to_view = self.get_filename_from_user("Enter filename to play (w/o extension): ").strip()
         Utilities.pause(1.5)
         Utilities.clear_screen()
             
@@ -101,6 +101,66 @@ class QuizApp:
             else:
                 Utilities.display_message("\n🚫 Invalid input. Returning to main menu...", delay=1)
                 break
+        
+    # run the quiz (not the actual main menu)
+    def run_quiz_session(self):
+        while True:
+            filename_to_play = self.get_filename_from_user("Enter filename to play (w/o extension): ")
+            Utilities.display_message("📂 Loading quiz...", delay=2)
+            
+            file_manager = QuizFileManager(filename_to_play)
+            self.quiz_questions = file_manager.load_quiz_content()
+
+            if not self.quiz_questions:
+                Utilities.display_message("\n🚫 No questions loaded. Please check filename or quiz content.", delay=2)
+                retry = input("Do you want to try another filename? (yes/no): ").strip().lower()
+                if retry != "yes":
+                    return # Go back to main menu
+                else:
+                    continue # Loop back to ask for filename again
+            else:
+                break # Exit filename loop if questions are loaded
+
+        random.shuffle(self.quiz_questions) # Shuffle questions
+        score = 0
+        total_questions = len(self.quiz_questions)
+        
+        for i, question_obj in enumerate(self.quiz_questions):
+            Utilities.clear_screen()
+            print(f"--- Question {i + 1}/{total_questions} ---")
+            print(f"Question: {question_obj.text}")
+            for j, choice in enumerate(question_obj.choices):
+                print(f"{chr(97 + j)}) {choice}")
+                
+            while True:
+                user_answer_letter = input("\nYour answer (a/b/c/d): ").strip().lower()
+                if user_answer_letter in ['a', 'b', 'c', 'd']:
+                    break
+                else:
+                    print("🚫 Invalid input. Please enter only 'a', 'b', 'c', or 'd'.")
+
+            if question_obj.check_user_answer(user_answer_letter):
+                score += 1
+                Utilities.display_message(f"""\n✅ Correct! +1 point!
+📊 Your current score: {score}/{total_questions}""", delay=1.5)
+            else:
+                Utilities.display_message(f"""\n❌ Wrong! The correct answer was {question_obj.correct_ans_letter}) {question_obj.correct_ans_text}
+📊 Your current score: {score}/{total_questions}""", delay=1.5)
+            
+        Utilities.clear_screen()
+        Utilities.display_message(f"🏁 Quiz finished! Your final score: {score}/{total_questions}", delay=2)
+            
+        while True:
+            Utilities.display_message("\n❗ Entering 'no' will exit the program.", delay=0)
+            back = input("Do you want to go to main menu? (yes/no): ").strip().lower()
+            if back == "yes":
+                return
+            elif back == "no":
+                Utilities.display_message("\nGoodbye, user!👋", delay=1)
+                exit()
+            else:
+                Utilities.display_message("🚫 Invalid input. Please answer with 'yes' or 'no'.", delay=1)
+                continue 
         
     # run the program (main menu)
     def run(self):
